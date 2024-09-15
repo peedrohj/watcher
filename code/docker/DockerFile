@@ -1,1 +1,14 @@
-FROM alpine:3.20
+FROM ubuntu:latest as build
+
+ENV GRAFANA_VERSION=v11.2.0
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH}
+
+# Install base dependencies
+RUN apt-get -y update && apt-get -y install curl
+
+WORKDIR /app
+RUN bash -c 'curl -sOL https://dl.grafana.com/oss/release/grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
+    tar xfz grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
+    rm grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
+    mv grafana-v"${GRAFANA_VERSION:1}" grafana/'
