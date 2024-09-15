@@ -12,3 +12,9 @@ RUN bash -c 'curl -sOL https://dl.grafana.com/oss/release/grafana-"${GRAFANA_VER
     tar xfz grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
     rm grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
     mv grafana-v"${GRAFANA_VERSION:1}" grafana/'
+
+COPY --chmod=0755 services/run.sh services/run.sh
+COPY --chown=root services services
+
+RUN ["chmod", "+x", "/app/services/run.sh"]
+ENTRYPOINT ["sh", "/app/services/run.sh"]

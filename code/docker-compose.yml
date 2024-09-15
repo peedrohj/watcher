@@ -5,3 +5,7 @@ services:
       dockerfile: docker/Dockerfile
     container_name: watcher
     image: watcher
+    volumes:
+      - ./services:/app/services
+    ports:
+      - "3000:3000"
