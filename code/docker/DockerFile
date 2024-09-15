@@ -1,17 +1,24 @@
 FROM ubuntu:latest as build
 
-ENV GRAFANA_VERSION=v11.2.0
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
+ENV GRAFANA_VERSION=v11.2.0
+ENV OPENTELEMETRY_VERSION=v0.109.0
 
 # Install base dependencies
 RUN apt-get -y update && apt-get -y install curl
-
 WORKDIR /app
+
 RUN bash -c 'curl -sOL https://dl.grafana.com/oss/release/grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
     tar xfz grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
     rm grafana-"${GRAFANA_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
     mv grafana-v"${GRAFANA_VERSION:1}" grafana/'
+
+RUN bash -c 'curl -sOL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/"${OPENTELEMETRY_VERSION}"/otelcol-contrib_"${OPENTELEMETRY_VERSION:1}"_linux_"${TARGETARCH}".tar.gz && \
+    mkdir otelcol-contrib && \
+    tar xfz otelcol-contrib_"${OPENTELEMETRY_VERSION:1}"_linux_"${TARGETARCH}".tar.gz -C otelcol-contrib/ && \
+    rm otelcol-contrib_"${OPENTELEMETRY_VERSION:1}"_linux_"${TARGETARCH}".tar.gz'
+
 
 COPY --chmod=0755 services/run.sh services/run.sh
 COPY --chown=root services services
