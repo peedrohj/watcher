@@ -4,6 +4,7 @@ sh /app/services/grafana/run.sh &
 sh /app/services/otel/run.sh &
 sh /app/services/prometheus/run.sh &
 sh /app/services/tempo/run.sh &
+sh /app/services/loki/run.sh &
 
 
 grafana_url="http://localhost:3000"

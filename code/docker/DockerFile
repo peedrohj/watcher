@@ -38,6 +38,7 @@ RUN bash -c 'curl -sOL https://github.com/grafana/tempo/releases/download/"${TEM
 RUN bash -c 'curl -sOL https://github.com/grafana/loki/releases/download/"${LOKI_VERSION}"/loki-linux-"${TARGETARCH}".zip && \
     mkdir loki && \
     unzip loki-linux-"${TARGETARCH}" -d loki/ && \
+    mv loki/loki-linux-"${TARGETARCH}" loki/loki-linux && \
     rm loki-linux-"${TARGETARCH}".zip'
 
 COPY --chmod=0755 services/run.sh services/run.sh
