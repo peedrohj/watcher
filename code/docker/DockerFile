@@ -4,6 +4,7 @@ ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
 ENV GRAFANA_VERSION=v11.2.0
 ENV OPENTELEMETRY_VERSION=v0.109.0
+ENV PROMETHEUS_VERSION=v2.54.1
 
 # Install base dependencies
 RUN apt-get -y update && apt-get -y install curl
@@ -19,6 +20,11 @@ RUN bash -c 'curl -sOL https://github.com/open-telemetry/opentelemetry-collector
     tar xfz otelcol-contrib_"${OPENTELEMETRY_VERSION:1}"_linux_"${TARGETARCH}".tar.gz -C otelcol-contrib/ && \
     rm otelcol-contrib_"${OPENTELEMETRY_VERSION:1}"_linux_"${TARGETARCH}".tar.gz'
 
+
+RUN bash -c 'curl -sOL https://github.com/prometheus/prometheus/releases/download/"${PROMETHEUS_VERSION}"/prometheus-"${PROMETHEUS_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
+    tar xfz prometheus-"${PROMETHEUS_VERSION:1}".linux-"${TARGETARCH}".tar.gz && \
+    mv prometheus-"${PROMETHEUS_VERSION:1}".linux-"${TARGETARCH}" prometheus && \
+    rm prometheus-"${PROMETHEUS_VERSION:1}".linux-"${TARGETARCH}".tar.gz'
 
 COPY --chmod=0755 services/run.sh services/run.sh
 COPY --chown=root services services
