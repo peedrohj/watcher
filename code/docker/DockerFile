@@ -41,6 +41,11 @@ RUN bash -c 'curl -sOL https://github.com/grafana/loki/releases/download/"${LOKI
     mv loki/loki-linux-"${TARGETARCH}" loki/loki-linux && \
     rm loki-linux-"${TARGETARCH}".zip'
 
+
+FROM alpine:3.20
+WORKDIR /app
+
+COPY --from=lgtm /app /app
 COPY --chmod=0755 services/run.sh services/run.sh
 COPY --chown=root services services
 
