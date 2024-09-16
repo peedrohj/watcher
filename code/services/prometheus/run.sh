@@ -14,5 +14,5 @@ command="./prometheus \
 "
 
 cd /app/prometheus
-logger "$enable_logs" "$command" &
+logger "$enable_logs" "$command"
 

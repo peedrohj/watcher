@@ -6,4 +6,4 @@ config_file="/app/services/otel/config.yaml"
 command="./otelcol-contrib --config=file:${config_file}"
 
 cd /app/otelcol-contrib
-logger "$enable_logs" "$command" &
+logger "$enable_logs" "$command"
