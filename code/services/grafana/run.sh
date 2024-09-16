@@ -7,5 +7,3 @@ command="./grafana server"
 
 cd /app/grafana/bin
 logger "$enable_logs" "$command" &
-
-echo "Grafana is up on port: 3000"
