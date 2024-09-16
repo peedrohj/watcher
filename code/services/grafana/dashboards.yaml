@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: 'Api Dashboard'
+    type: file
+    options:
+      path: /app/services/grafana/dashboards/api_dashboard.json
+      foldersFromFilesStructure: false
+
