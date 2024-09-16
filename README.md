@@ -1,86 +1,124 @@
-# Watcher
+# Watcher: Observability Stack (Loki, Grafana, Tempo, Prometheus, OTLP)
 
-Watcher is a lightweight monitoring solution designed to integrate with the **LGTM** stack (Loki, Grafana, Tempo, and Prometheus). This project creates a Docker image that simplifies logging, tracing, and observability for applications, making it easy to monitor systems and applications with customizable metrics.
+**Watcher** is an observability service that integrates multiple open-source tools into a customizable Docker image, offering monitoring, logging, and tracing capabilities out of the box. This stack includes **Loki**, **Grafana**, **Tempo**, **Prometheus**, and **OTLP**, with flexibility to add custom dashboards and datasources.
+
+## Table of Contents
+
+- [Watcher: Observability Stack (Loki, Grafana, Tempo, Prometheus, OTLP)](#watcher-observability-stack-loki-grafana-tempo-prometheus-otlp)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [Custom Logging Control](#custom-logging-control)
+    - [Dashboards and Datasources](#dashboards-and-datasources)
+      - [Adding Custom Dashboards](#adding-custom-dashboards)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Features
-- **LGTM Integration**: Seamless integration with Loki (logging), Grafana (visualization), Tempo (tracing), and Prometheus (metrics).
-- **Dockerized**: Deploy Watcher easily using Docker.
-- **Log and Trace Management**: Manage logs and traces using environment variables.
-- **Custom Metrics**: Leverage Prometheus for real-time monitoring of application metrics.
 
-## Stack Overview
-The **LGTM** stack includes:
-- **Loki**: Centralized log aggregation.
-- **Grafana**: Dashboards and visualizations.
-- **Tempo**: Distributed tracing for request tracking.
-- **Prometheus**: Metric collection and alerting.
-
-Watcher acts as a part of this stack, providing an efficient way to track logs, traces, and metrics for your services.
-
-## Prerequisites
-- **Docker**: Make sure Docker is installed. [Download Docker](https://www.docker.com/get-started).
-- **Docker Compose**: Optional, but useful for managing multi-container environments.
+- Pre-configured **Loki** for log aggregation.
+- **Grafana** dashboards with customizable data sources.
+- Distributed tracing with **Tempo**.
+- Monitoring and alerting with **Prometheus**.
+- OTLP (OpenTelemetry Protocol) support for seamless telemetry collection.
+- Service-specific logging control with environment variables.
+- Custom dashboards and datasources can be easily added.
 
 ## Getting Started
 
-### Clone the Repository
+### Prerequisites
+
+- Docker installed on your machine.
+- Basic knowledge of Docker and observability tools like Grafana, Prometheus, etc.
+
+### Installation
+
+Clone the repository:
+
 ```bash
 git clone https://github.com/peedrohj/watcher.git
 cd watcher
 ```
 
-### Build the Docker Image
-To build the Watcher Docker image, run the following command:
+Build the Docker image:
 
 ```bash
-docker build -t watcher:latest .
+docker build -t watcher-observability .
 ```
 
-### Running the Container
-You can run the Watcher container by specifying the `ENABLE_LOGS_GRAFANA` environment variable to control logging:
+Run the container:
 
 ```bash
-docker run -e ENABLE_LOGS_GRAFANA=true watcher:latest
+docker run -d -p 3000:3000 watcher-observability
 ```
 
-### Using Docker Compose
-If deploying with the full LGTM stack, use `docker-compose.yml` to simplify the setup:
-
-```bash
-docker-compose up
-```
-
-This will bring up Watcher along with Loki, Grafana, Tempo, and Prometheus.
+Grafana will be accessible at `http://localhost:3000`.
 
 ## Configuration
 
-### Environment Variables
-- **ENABLE_LOGS_GRAFANA**: Set this variable to `true` to enable logging and tracing, or to `false` to disable them.
-  ```bash
-  export ENABLE_LOGS_GRAFANA=true
-  ```
+### Custom Logging Control
 
-### Docker Compose Configuration
-The `docker-compose.yml` file contains configurations for integrating Watcher into the full LGTM stack. Modify it as needed to customize the connections between Loki, Grafana, Tempo, and Prometheus.
+Watcher allows you to enable or disable logs for each service using environment variables:
 
-## Observability Stack (LGTM)
-- **Loki**: Collects logs from Watcher and aggregates them for viewing in Grafana.
-- **Grafana**: Displays metrics, logs, and traces on customizable dashboards.
-- **Tempo**: Provides distributed tracing, which tracks requests across microservices.
-- **Prometheus**: Monitors metrics from Watcher and sets up alerting based on thresholds.
+- To enable logging for Grafana, set the environment variable `ENABLE_LOGS_GRAFANA=true`.
+- To enable logs for all services at once, use `ENABLE_LOGS_ALL=true`.
+
+Supported services:
+- `ENABLE_LOGS_GRAFANA`
+- `ENABLE_LOGS_LOKI`
+- `ENABLE_LOGS_TEMPO`
+- `ENABLE_LOGS_PROMETHEUS`
+
+Add these options to your Docker command:
+
+```bash
+docker run -d -p 3000:3000 \
+  -e ENABLE_LOGS_GRAFANA=true \
+  -e ENABLE_LOGS_TEMPO=true \
+  watcher-observability
+```
+
+### Dashboards and Datasources
+
+You can customize your Grafana dashboards and datasources by adding JSON files and updating the configuration.
+
+#### Adding Custom Dashboards
+
+1. Add your custom dashboard JSON file to the `services/grafana/dashboards` directory.
+2. Update the `dashboards.yaml` file in the same directory to include your new dashboard. Example entry in `dashboards.yaml`:
+
+```yaml
+apiVersion: 1
+
+providers:
+  - name: 'Custom Dashboards'
+    folder: ''
+    type: file
+    options:
+      path: /app/services/grafana/dashboards/<your_file>.json
+```
+
+Once you've added the dashboard JSON and updated the YAML file, restart the container to apply the changes:
+
+```bash
+docker restart <container-id>
+```
+
+This will load your custom dashboards into Grafana automatically.
+
+## Usage
+
+- **Grafana** is the main interface for accessing the observability stack.
+- **Prometheus** collects metrics, **Loki** aggregates logs, and **Tempo** provides distributed tracing.
+- Custom logging and data visualization can be configured by editing the environment variables and mounting custom dashboard files.
 
 ## Contributing
 
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new feature branch: `git checkout -b feature-branch`.
-3. Make your changes and commit: `git commit -m 'Add feature'`.
-4. Push to the branch: `git push origin feature-branch`.
-5. Open a pull request.
+Contributions are welcome! Please create a pull request or open an issue on the [GitHub repository](https://github.com/peedrohj/watcher).
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
----
-
-This README now correctly reflects the LGTM stack (Loki, Grafana, Tempo, and Prometheus). Let me know if you need any further adjustments!
