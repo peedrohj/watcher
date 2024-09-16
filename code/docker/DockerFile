@@ -45,4 +45,6 @@ COPY --chmod=0755 services/run.sh services/run.sh
 COPY --chown=root services services
 
 RUN ["chmod", "+x", "/app/services/run.sh"]
+RUN ["ln", "-s", "/app/services/grafana/datasources.yaml", "/app/grafana/conf/provisioning/datasources/"]
+
 ENTRYPOINT ["sh", "/app/services/run.sh"]
